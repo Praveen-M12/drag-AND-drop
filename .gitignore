@@ -1,0 +1,25 @@
+# Ignore node_modules directory
+node_modules/
+
+# Ignore environment-specific configuration files
+config/*.json
+
+# Ignore log files
+logs/
+
+# Ignore IDE and editor files
+.vscode/
+.idea/
+
+# Ignore operating system files
+.DS_Store
+Thumbs.db
+
+# Ignore npm debug log
+npm-debug.log
+
+# Ignore environment file
+.env
+
+#Ignore lock file
+package-lock-json

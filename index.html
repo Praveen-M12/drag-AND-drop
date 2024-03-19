@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Drag and Drop Example</title>
+<style>
+/* CSS styles */
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.drop-area {
+  width: 300px;
+  height: 200px;
+  border: 2px dashed #ccc;
+  border-color: #0056b3;
+  background-color: rgb(240, 239, 239);
+  text-align: center;
+  padding: 20px;
+  position: relative;
+}
+
+.drop-text {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.submit-button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 150px;
+  margin-left: 200px;
+  border: 2px dashed #101010;
+
+}
+
+.submit-button:hover {
+  background-color: #0056b3;
+}
+
+.image-preview {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.input-file {
+  display: none;
+}
+
+.choose-file-link {
+  color: #007bff;
+  text-decoration: none;
+  cursor: pointer;
+  position: absolute;
+  left: calc(45% - 75px);
+  bottom: 225px;
+  /* border: black dashed 1px; */
+  /* background-color: antiquewhite; */
+  font-style: italic bold;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <input type="file" id="file-input" class="input-file" accept="image/*">
+  <label for="file-input" class="drop-area" id="drop-area">
+    <span class="drop-text">Drop files or images here</span>
+    <button class="submit-button" id="submit-button">Submit</button>
+  </label>
+  <span class="choose-file-link" id="choose-file-link">Choose from browser</span>
+</div>
+
+<script>
+// JavaScript code
+const dropArea = document.getElementById('drop-area');
+const fileInput = document.getElementById('file-input');
+const chooseFileLink = document.getElementById('choose-file-link');
+
+['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+  dropArea.addEventListener(eventName, preventDefaults, false);
+});
+
+function preventDefaults(event) {
+  event.preventDefault();
+  event.stopPropagation();
+}
+
+['dragenter', 'dragover'].forEach(eventName => {
+  dropArea.addEventListener(eventName, highlight, false);
+});
+
+['dragleave', 'drop'].forEach(eventName => {
+  dropArea.addEventListener(eventName, unhighlight, false);
+});
+
+function highlight(event) {
+  dropArea.classList.add('highlight');
+}
+
+function unhighlight(event) {
+  dropArea.classList.remove('highlight');
+}
+
+dropArea.addEventListener('drop', handleDrop, false);
+fileInput.addEventListener('change', handleInput, false);
+chooseFileLink.addEventListener('click', openFilePicker, false);
+
+function handleDrop(event) {
+  const dt = event.dataTransfer;
+  const files = dt.files;
+
+  handleFiles(files);
+}
+
+function handleInput(event) {
+  const files = event.target.files;
+
+  handleFiles(files);
+}
+
+function handleFiles(files) {
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
+
+    if (file.type.startsWith('image/')) {
+      const reader = new FileReader();
+
+      reader.readAsDataURL(file);
+      reader.onload = function() {
+        const img = new Image();
+        img.src = reader.result;
+
+        const imagePreview = document.createElement('img');
+        imagePreview.classList.add('image-preview');
+        imagePreview.src = reader.result;
+
+        document.body.appendChild(imagePreview); // Append to body instead of drop area
+      };
+    } else {
+      console.log('File is not an image:', file.name);
+    }
+  }
+}
+
+function openFilePicker() {
+  fileInput.click();
+}
+</script>
+
+</body>
+</html>
